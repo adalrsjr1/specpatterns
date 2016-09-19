@@ -11,6 +11,7 @@ class And {
 	
 	And(ExpressionBuilder expressionBuilder, TemporalOccurrence occurrence, ExpressionPattern pattern, List<ExpressionVariable> vars) {
 		this.expressionBuilder = expressionBuilder
+		this.occurrence = occurrence
 		this.pattern = pattern
 		this.vars = vars
 	}
@@ -31,6 +32,7 @@ class Until {
 	
 	Until(ExpressionBuilder expressionBuilder, TemporalOccurrence occurrence, ExpressionPattern pattern, List<ExpressionVariable> vars) {
 		this.expressionBuilder = expressionBuilder
+		this.occurrence = occurrence
 		this.pattern = pattern
 		this.vars = vars
 	}
@@ -60,16 +62,19 @@ class ExpressionBuilder {
 		this.pattern = pattern
 	}
 	
-	PropertyInstance globally() {
+	ExpressionBuilder globally() {
 		instance = new PropertyInstance(TemporalOccurrence.GLOBALLY, pattern, vars)
+		return this
 	}
 	
-	PropertyInstance before(ExpressionVariable r) {
+	ExpressionBuilder before(ExpressionVariable r) {
 		instance = new PropertyInstance(TemporalOccurrence.BEFORE_R, pattern, vars)
+		return this
 	}
 	
-	PropertyInstance justAfter(ExpressionVariable q) {
+	ExpressionBuilder justAfter(ExpressionVariable q) {
 		instance = new PropertyInstance(TemporalOccurrence.AFTER_Q, pattern, vars)
+		return this
 	}
 	
 	Until after(ExpressionVariable q) {
@@ -81,7 +86,7 @@ class ExpressionBuilder {
 	}
 	
 	PropertyInstance build() {
-		log.debug "expression building"
 		instance.build()
+		return instance
 	}
 }
