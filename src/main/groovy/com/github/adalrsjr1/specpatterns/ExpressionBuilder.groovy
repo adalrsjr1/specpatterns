@@ -5,17 +5,19 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class And {
 	ExpressionBuilder expressionBuilder
-	String prefix
+	List<ExpressionVariable> vars
 	ExpressionPattern pattern
+	TemporalOccurrence occurrence
 	
-	And(ExpressionBuilder expressionBuilder, ExpressionPattern pattern, String prefix) {
+	And(ExpressionBuilder expressionBuilder, TemporalOccurrence occurrence, ExpressionPattern pattern, List<ExpressionVariable> vars) {
 		this.expressionBuilder = expressionBuilder
 		this.pattern = pattern
-		this.prefix = prefix
+		this.vars = vars
 	}
 	
 	ExpressionBuilder and(ExpressionVariable r) {
-		expressionBuilder.instance = new PropertyInstance(pattern, "$prefix and $r")
+		vars << r
+		expressionBuilder.instance = new PropertyInstance(occurrence, pattern, vars)
 		return expressionBuilder
 	}
 }
@@ -23,17 +25,19 @@ class And {
 @Slf4j
 class Until {
 	ExpressionBuilder expressionBuilder
-	String prefix
+	List<ExpressionVariable> vars
 	ExpressionPattern pattern
+	TemporalOccurrence occurrence
 	
-	Until(ExpressionBuilder expressionBuilder, ExpressionPattern pattern, String prefix) {
+	Until(ExpressionBuilder expressionBuilder, TemporalOccurrence occurrence, ExpressionPattern pattern, List<ExpressionVariable> vars) {
 		this.expressionBuilder = expressionBuilder
 		this.pattern = pattern
-		this.prefix = prefix
+		this.vars = vars
 	}
 	
 	ExpressionBuilder until(ExpressionVariable r) {
-		expressionBuilder.instance = new PropertyInstance(pattern, "$prefix until $r")
+		vars << r
+		expressionBuilder.instance = new PropertyInstance(occurrence, pattern, vars)
 		return expressionBuilder
 	}
 	
@@ -41,36 +45,39 @@ class Until {
 
 @Slf4j
 class ExpressionBuilder {
-	String p
+	List<ExpressionVariable> vars = []
 	ExpressionPattern pattern 
 	
 	PropertyInstance instance
 	
 	ExpressionBuilder(ExpressionPattern pattern, ExpressionVariable p) {
-		this.p = p
+		this.vars << p
+		this.pattern = pattern
+	}
+	
+	ExpressionBuilder(ExpressionPattern pattern, List<ExpressionVariable> ps) {
+		vars.addAll(ps)
 		this.pattern = pattern
 	}
 	
 	PropertyInstance globally() {
-		instance = new PropertyInstance(pattern, "$p globally")
+		instance = new PropertyInstance(TemporalOccurrence.GLOBALLY, pattern, vars)
 	}
 	
 	PropertyInstance before(ExpressionVariable r) {
-		instance = new PropertyInstance(pattern, "$p before $r")
+		instance = new PropertyInstance(TemporalOccurrence.BEFORE_R, pattern, vars)
 	}
 	
 	PropertyInstance justAfter(ExpressionVariable q) {
-		instance = new PropertyInstance(pattern, "$p justAfter $q")
+		instance = new PropertyInstance(TemporalOccurrence.AFTER_Q, pattern, vars)
 	}
 	
 	Until after(ExpressionVariable q) {
-		String prefix = "$p after $q"
-		return new Until(this, pattern, prefix)
+		return new Until(this, TemporalOccurrence.AFTER_Q_UNTIL_R, pattern, vars)
 	}
 	
 	And between(ExpressionVariable q) {
-		String prefix = "$p between $q"
-		return new And(this, pattern, prefix)
+		return new And(this, TemporalOccurrence.BETWEEN_Q_AND_R, pattern, vars)
 	}
 	
 	PropertyInstance build() {

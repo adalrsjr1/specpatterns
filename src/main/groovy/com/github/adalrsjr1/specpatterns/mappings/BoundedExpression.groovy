@@ -1,0 +1,24 @@
+package com.github.adalrsjr1.specpatterns.mappings
+
+import com.github.adalrsjr1.specpatterns.ExpressionBuilder
+import com.github.adalrsjr1.specpatterns.ExpressionPattern;
+import com.github.adalrsjr1.specpatterns.ExpressionVariable;
+
+import groovy.util.logging.Slf4j
+
+@Slf4j
+class BoundedExpression {
+	ExpressionVariable p
+	
+	BoundedExpression(ExpressionVariable p) {
+		this.p = p
+	}
+	
+	ExpressionBuilder occurs(int nTimes) {
+		List vars = []
+		for(i in 1..nTimes) {
+			vars << p
+		}
+		new ExpressionBuilder(ExpressionPattern.RESPONSE, vars)
+	}
+}
