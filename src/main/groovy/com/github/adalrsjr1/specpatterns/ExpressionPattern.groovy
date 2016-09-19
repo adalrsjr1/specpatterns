@@ -6,70 +6,143 @@ enum ExpressionPattern {
 	ABSENCE {
 		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
 			switch(temporalProperty) {
-				case TemporalOccurrence.GLOBALLY : return "G(!#1)"
-				case TemporalOccurrence.BEFORE_R : return "F#2 -> (!#1 U #2)"
-				case TemporalOccurrence.AFTER_Q : return "G(#2 -> G(!#1))"
-				case TemporalOccurrence.BETWEEN_Q_AND_R : return "G((#2 && !#3 & F#3) -> (!#1 U #3))"
-				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "G(#2 && !#3 -> (!#1 W #3))"
+				case TemporalOccurrence.GLOBALLY : return "[](!#1)"
+				case TemporalOccurrence.BEFORE_R : return "<>#2 -> (!#1 U #2)"
+				case TemporalOccurrence.AFTER_Q : return "[](#2 -> [](!#1))"
+				case TemporalOccurrence.BETWEEN_Q_AND_R : return "[]((#2 && !#3 & <>#3) -> (!#1 U #3))"
+				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "[](#2 && !#3 -> (!#1 W #3))"
 				default: return ""
 			}
 		}
 	}, 
+
 	EXISTENCE {
 		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
 			switch(temporalProperty) {
-				case TemporalOccurrence.GLOBALLY : return "F(#1)"
+				case TemporalOccurrence.GLOBALLY : return "<>(#1)"
 				case TemporalOccurrence.BEFORE_R : return "!#2 W (#1 && !#2)"
-				case TemporalOccurrence.AFTER_Q : return "G(!#2) | F(#2 & F#1))"
-				case TemporalOccurrence.BETWEEN_Q_AND_R : return "G(#2 & !#3 -> (!#3 W (#1 && !#3)))"
-				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "G(#2 & !#3 -> (!#3 U (#1 && !#3)))"
+				case TemporalOccurrence.AFTER_Q : return "[](!#2) | <>(#2 & <>#1))"
+				case TemporalOccurrence.BETWEEN_Q_AND_R : return "[](#2 & !#3 -> (!#3 W (#1 && !#3)))"
+				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "[](#2 & !#3 -> (!#3 U (#1 && !#3)))"
 				default: return ""
 			}
 		}
 	},
+
 	BOUNDED_EXISTENCE {
 		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
-			
+			switch(temporalProperty) {
+				case TemporalOccurrence.GLOBALLY : return "(!#1 W (#1 W (!#1 W (#1 W []!#1))))"
+				case TemporalOccurrence.BEFORE_R : return "<>#2 -> ((!#1 & !#2) U (#2 | ((#1 & !#2) U (#2 | ((!#1 & !#2) U (#2 | ((#1 & !#2) U (R | (!#1 U #2)))))))))"
+				case TemporalOccurrence.AFTER_Q : return "<>#2 -> (!#2 U (#2 & (!#1 W (#1 W (!#1 W (#1 W []!#1))))))"
+				case TemporalOccurrence.BETWEEN_Q_AND_R : return "[]((#2 & <>#3) -> ((!#1 & !#3) U (#3 | ((#1 & !#3) U (#3 | ((!#1 & !#3) U (#3 | ((#1 & !#3) U (#3 | (!#1 U #3))))))))))"
+				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "[](#2 -> ((!#1 & !#3) U (#3 | ((#1 & !#3) U (#3 | ((!#1 & !#3) U (#3 | ((#1 & !#3) U (#3 | (!#1 W #3) | []#1)))))))))"
+				default: return ""
+			}
 		}
 	},
+
 	UNIVERSALITY {
 		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
-			
+			switch(temporalProperty) {
+				case TemporalOccurrence.GLOBALLY : return "[](#1)"
+				case TemporalOccurrence.BEFORE_R : return "<>#2 -> (#1 U #2)"
+				case TemporalOccurrence.AFTER_Q : return "[](#2 -> [](#1))"
+				case TemporalOccurrence.BETWEEN_Q_AND_R : return "[]((#2 & !#3 & <>#3) -> (#1 U #3))"
+				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "[](#2 & !#3 -> (#1 W #3))"
+				default: return ""
+			}
 		}
 	},
-	PRECEDENCE {
-		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
-			
-		}
-	},
+
 	RESPONSE {
 		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
-			
+			switch(temporalProperty) {
+				case TemporalOccurrence.GLOBALLY : return "[](#2 -> <>#1)"
+				case TemporalOccurrence.BEFORE_R : return "<>#3 -> (#2 -> (!#3 U (#1 & !#3))) U #3"
+				case TemporalOccurrence.AFTER_Q : return "[](#3 -> [](#2 -> <>#1))"
+				case TemporalOccurrence.BETWEEN_Q_AND_R : return "[]((#3 & !#4 & <>#4) -> (#1 -> (!#4 U (#2 & !#4))) U #4)"
+				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "[](#3 & !#4 -> ((#2 -> (!#4 U (#1 & !#4))) W #4)"
+				default: return ""
+			}
 		}
 	},
+
+	PRECEDENCE {
+		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
+			switch(temporalProperty) {
+				case TemporalOccurrence.GLOBALLY : return "!#2 W #1"
+				case TemporalOccurrence.BEFORE_R : return "<>#3 -> (!#2 U (#1 | #3))"
+				case TemporalOccurrence.AFTER_Q : return "[]!#3 | <>(#3 & (!#2 W #1))"
+				case TemporalOccurrence.BETWEEN_Q_AND_R : return "[]((#3 & !#4 & <>#4) -> (!#2 U (#1 | #4)))"
+				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "[](#3 & !#4 -> (!#2 W (#1 | #4)))"
+				default: return ""
+			}
+		}
+	},
+
 	PRECEDENCE_CHAIN_ONE {
 		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
-			
+			switch(temporalProperty) {
+				case TemporalOccurrence.GLOBALLY : return "<>#3 -> (!#3 U (#1 & !#3 & ()(!#3 U #2)))"
+				case TemporalOccurrence.BEFORE_R : return "<>#4 -> (!#3 U (#4 | (#1 & !#3 & ()(!#3 U #2))))"
+				case TemporalOccurrence.AFTER_Q : return "([]!#4) | (!#4 U (#4 & <>#3 -> (!#3 U (#1 & !#3 & ()(!#3 U #2))))"
+				case TemporalOccurrence.BETWEEN_Q_AND_R : return "[]((#4 & <>#5) -> (!#3 U (#5 | (#1 & !#3 & ()(!#3 U #2)))))"
+				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "[](#4 -> (<>#3 -> (!#3 U (#5 | (#1 & !#3 & ()(!#3 U #2))))))"
+				default: return ""
+			}
 		}
 	},
+
 	PRECEDENCE_CHAIN_TWO {
 		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
-			
+			switch(temporalProperty) {
+				case TemporalOccurrence.GLOBALLY : return "(<>(#2 & ()<>#3)) -> ((!#2) U #1))"
+				case TemporalOccurrence.BEFORE_R : return "<>#4 -> ((!(#2 & (!#4) & ()(!#4 U (#3 & !#4)))) U (#4 | #1))"
+				case TemporalOccurrence.AFTER_Q : return "([]!#4) | ((!#4) U (#4 & ((<>(#2 & ()<>#3)) -> ((!#2) U #1)))"
+				case TemporalOccurrence.BETWEEN_Q_AND_R : return "[]((#4 & <>#5) -> ((!(#2 & (!#5) & ()(!#5 U (#3 & !#5)))) U (#5 | #1)))"
+				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "[](#4 -> (!(#2 & (!#5) & ()(!#5 U (#3 & !#5))) U (#5 | #1) | [](!(#2 & ()<>#3))))"
+				default: return ""
+			}
 		}
 	},
+
 	RESPONSE_CHAIN_ONE {
 		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
-			
+			switch(temporalProperty) {
+				case TemporalOccurrence.GLOBALLY : return "[] (#3 -> <>(#1 & ()<>#2))"
+				case TemporalOccurrence.BEFORE_R : return "<>#4 -> (#3 -> (!#4 U (#1 & !#4 & ()(!#4 U #2)))) U #4"
+				case TemporalOccurrence.AFTER_Q : return "[] (#4 -> [] (#3 -> (#1 & ()<> #2)))"
+				case TemporalOccurrence.BETWEEN_Q_AND_R : return "[] ((#4 & <>#5) -> (#3 -> (!#5 U (#1 & !#5 & ()(!#5 U #2)))) U #5)"
+				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "[] (#4 -> (#3 -> (!#5 U (#1 & !#5 & ()(!#5 U #2)))) U (#5 | [] (#3 -> (#1 & ()<> #2))))"
+				default: return ""
+			}
 		}
 	},
+
 	RESPONSE_CHAIN_TWO {
 		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
-			
+			switch(temporalProperty) {
+				case TemporalOccurrence.GLOBALLY : return "[] (#2 & ()<> #3 -> ()(<>(#3 & <> #1)))"
+				case TemporalOccurrence.BEFORE_R : return "<>#4 -> (#2 & ()(!#4 U #3) -> ()(!#4 U (#3 & <> #1))) U #4"
+				case TemporalOccurrence.AFTER_Q : return "[] (#4 -> [] (#2 & ()<> #3 -> ()(!#3 U (#3 & <> #1))))"
+				case TemporalOccurrence.BETWEEN_Q_AND_R : return "[] ((#4 & <>#5) -> (#2 & ()(!#5 U #3) -> ()(!#5 U (#3 & <> #1))) U #5)"
+				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "[] (#4 -> (#2 & ()(!#5 U #3) -> ()(!#5 U (#3 & <> #1))) U (#5 | [] (#2 & ()(!#5 U #3) -> ()(!#5 U (#3 & <> #1)))))"
+				default: return ""
+			}
 		}
 	},
+
 	CONSTRAINED_CHAIN {
 		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
-			
+			switch(temporalProperty) {
+				case TemporalOccurrence.GLOBALLY : return "[] (#4 -> <>(#1 & !#3 & ()(!#3 U #2)))"
+				case TemporalOccurrence.BEFORE_R : return "<>#5 -> (#4 -> (!#5 U (#1 & !#5 & !#3 & ()((!#5 & !#3) U #2)))) U #5"
+				case TemporalOccurrence.AFTER_Q : return "[] (#5 -> [] (#4 -> (#1 & !#3 & ()(!#3 U #2))))"
+				case TemporalOccurrence.BETWEEN_Q_AND_R : return "[] ((#5 & <>#6) -> (#4 -> (!#6 U (#1 & !#6 & !#3 & ()((!#6 & !#3) U #2)))) U #6)"
+				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "[] (#5 -> (#4 -> (!#6 U (#1 & !#6 & !#3 & ()((!#6 & !#3) U #2)))) U (#6 | [] (#4 -> (#1 & !#3 & ()(!#3 U #2)))))"
+				default: return ""
+			}
 		}
 	}
 	

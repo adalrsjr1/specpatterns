@@ -19,6 +19,6 @@ class BoundedExpression {
 		for(i in 1..nTimes) {
 			vars << p
 		}
-		new ExpressionBuilder(ExpressionPattern.RESPONSE, vars)
+		new ExpressionBuilder(ExpressionPattern.BOUNDED_EXISTENCE, vars)
 	}
 }
