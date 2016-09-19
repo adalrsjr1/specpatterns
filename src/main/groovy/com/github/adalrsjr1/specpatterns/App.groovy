@@ -8,12 +8,12 @@ public class App
 {
     public static void main( String[] args )
     {
-		ExpressionVariable p = new ExpressionVariable("P")
-		ExpressionVariable q = new ExpressionVariable("Q")
-		ExpressionVariable r = new ExpressionVariable("R")
-		ExpressionVariable s = new ExpressionVariable("S")
-		ExpressionVariable t = new ExpressionVariable("T")
-		ExpressionVariable z = new ExpressionVariable("Z")
+		ExpressionVariable p = new ExpressionVariable("p")
+		ExpressionVariable q = new ExpressionVariable("q")
+		ExpressionVariable r = new ExpressionVariable("r")
+		ExpressionVariable s = new ExpressionVariable("s")
+		ExpressionVariable t = new ExpressionVariable("t")
+		ExpressionVariable z = new ExpressionVariable("z")
 		
 		PropertyPattern pp = Property.create()
 		

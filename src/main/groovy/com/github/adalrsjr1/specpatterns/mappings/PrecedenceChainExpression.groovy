@@ -27,6 +27,6 @@ class PrecedenceChainExpression {
 	
 	// s preceds p, t
 	ExpressionBuilder precedes(ExpressionVariable p, ExpressionVariable t) {
-		new ExpressionBuilder(ExpressionPattern.PRECEDENCE_CHAIN_TWO, [p,t,s])
+		new ExpressionBuilder(ExpressionPattern.PRECEDENCE_CHAIN_TWO, [p,s,t])
 	}
 }

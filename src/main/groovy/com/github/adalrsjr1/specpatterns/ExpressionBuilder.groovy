@@ -18,7 +18,7 @@ class And {
 	
 	ExpressionBuilder and(ExpressionVariable r) {
 		vars << r
-		expressionBuilder.instance = new PropertyInstance(occurrence, pattern, vars)
+		expressionBuilder.instance = new PropertyInstance(occurrence, pattern, vars << r)
 		return expressionBuilder
 	}
 }
@@ -39,7 +39,7 @@ class Until {
 	
 	ExpressionBuilder until(ExpressionVariable r) {
 		vars << r
-		expressionBuilder.instance = new PropertyInstance(occurrence, pattern, vars)
+		expressionBuilder.instance = new PropertyInstance(occurrence, pattern, vars << r)
 		return expressionBuilder
 	}
 	
@@ -68,21 +68,21 @@ class ExpressionBuilder {
 	}
 	
 	ExpressionBuilder before(ExpressionVariable r) {
-		instance = new PropertyInstance(TemporalOccurrence.BEFORE_R, pattern, vars)
+		instance = new PropertyInstance(TemporalOccurrence.BEFORE_R, pattern, vars << r)
 		return this
 	}
 	
 	ExpressionBuilder justAfter(ExpressionVariable q) {
-		instance = new PropertyInstance(TemporalOccurrence.AFTER_Q, pattern, vars)
+		instance = new PropertyInstance(TemporalOccurrence.AFTER_Q, pattern, vars << q)
 		return this
 	}
 	
 	Until after(ExpressionVariable q) {
-		return new Until(this, TemporalOccurrence.AFTER_Q_UNTIL_R, pattern, vars)
+		return new Until(this, TemporalOccurrence.AFTER_Q_UNTIL_R, pattern, vars << q)
 	}
 	
 	And between(ExpressionVariable q) {
-		return new And(this, TemporalOccurrence.BETWEEN_Q_AND_R, pattern, vars)
+		return new And(this, TemporalOccurrence.BETWEEN_Q_AND_R, pattern, vars << q)
 	}
 	
 	PropertyInstance build() {

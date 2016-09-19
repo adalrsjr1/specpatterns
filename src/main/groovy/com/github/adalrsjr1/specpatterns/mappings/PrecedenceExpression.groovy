@@ -15,6 +15,6 @@ class PrecedenceExpression {
 	}
 	
 	ExpressionBuilder precedes(ExpressionVariable p) {
-		new ExpressionBuilder(ExpressionPattern.PRECEDENCE, [p,s])
+		new ExpressionBuilder(ExpressionPattern.PRECEDENCE, [s,p])
 	}
 }

@@ -10,9 +10,10 @@ import groovy.util.logging.Slf4j
 class ResponseChainExpression {
 	ExpressionVariable s
 	ExpressionVariable t
+	ExpressionVariable p
 	
-	ResponseChainExpression(ExpressionVariable s) {
-		this.s = s
+	ResponseChainExpression(ExpressionVariable p) {
+		this.p = p
 	}
 	
 	ResponseChainExpression(ExpressionVariable s, ExpressionVariable t) {
@@ -26,7 +27,7 @@ class ResponseChainExpression {
 	}
 	
 	// s preceds p, t
-	ExpressionBuilder respondsTo(ExpressionVariable p, ExpressionVariable t) {
-		new ExpressionBuilder(ExpressionPattern.RESPONSE_CHAIN_TWO, [p,t,s])
+	ExpressionBuilder respondsTo(ExpressionVariable s, ExpressionVariable t) {
+		new ExpressionBuilder(ExpressionPattern.RESPONSE_CHAIN_TWO, [p,s,t])
 	}
 }

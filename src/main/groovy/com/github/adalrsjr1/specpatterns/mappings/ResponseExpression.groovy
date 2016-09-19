@@ -15,6 +15,6 @@ class ResponseExpression {
 	}
 	
 	ExpressionBuilder respondsTo(ExpressionVariable p) {
-		new ExpressionBuilder(ExpressionPattern.RESPONSE, [p,s])
+		new ExpressionBuilder(ExpressionPattern.RESPONSE, [s,p])
 	}
 }
