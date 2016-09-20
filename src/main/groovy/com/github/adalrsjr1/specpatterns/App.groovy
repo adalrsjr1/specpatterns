@@ -6,6 +6,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 public class App 
 {
+	// TODO: create a DSL to define the property by a textual file
     public static void main( String[] args )
     {
 		ExpressionVariable p = new ExpressionVariable("p")

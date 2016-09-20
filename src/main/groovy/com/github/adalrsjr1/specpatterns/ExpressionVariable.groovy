@@ -10,10 +10,6 @@ class ExpressionVariable {
 		this.var = var
 	}
 	
-	boolean evaluate() {
-		true
-	}
-	
 	String toString() {
 		var
 	}

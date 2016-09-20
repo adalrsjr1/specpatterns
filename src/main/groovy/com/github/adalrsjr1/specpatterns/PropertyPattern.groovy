@@ -22,7 +22,6 @@ class PropertyPattern {
 		new ExistenceExpression(p)
 	}
 	
-	// TODO: number of occurrences not implemented yet
 	BoundedExpression boundedExistence(ExpressionVariable p) {
 		new BoundedExpression(p)
 	}
