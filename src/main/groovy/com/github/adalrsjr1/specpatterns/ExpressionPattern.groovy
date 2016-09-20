@@ -30,15 +30,60 @@ enum ExpressionPattern {
 	},
 
 	BOUNDED_EXISTENCE {
-		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
+		String buildTemporalProperty(TemporalOccurrence temporalProperty) { }
+		
+		String buildTemporalProperty(TemporalOccurrence temporalProperty, int nOccurrence) {
 			switch(temporalProperty) {
-				case TemporalOccurrence.GLOBALLY : return "(!#1 W (#1 W (!#1 W (#1 W []!#1))))"
-				case TemporalOccurrence.BEFORE_R : return "<>#2 -> ((!#1 & !#2) U (#2 | ((#1 & !#2) U (#2 | ((!#1 & !#2) U (#2 | ((#1 & !#2) U (R | (!#1 U #2)))))))))"
-				case TemporalOccurrence.AFTER_Q : return "<>#2 -> (!#2 U (#2 & (!#1 W (#1 W (!#1 W (#1 W []!#1))))))"
-				case TemporalOccurrence.BETWEEN_Q_AND_R : return "[]((#2 & <>#3) -> ((!#1 & !#3) U (#3 | ((#1 & !#3) U (#3 | ((!#1 & !#3) U (#3 | ((#1 & !#3) U (#3 | (!#1 U #3))))))))))"
-				case TemporalOccurrence.AFTER_Q_UNTIL_R : return "[](#2 -> ((!#1 & !#3) U (#3 | ((#1 & !#3) U (#3 | ((!#1 & !#3) U (#3 | ((#1 & !#3) U (#3 | (!#1 W #3) | []#1)))))))))"
+				case TemporalOccurrence.GLOBALLY : return this.globally(nOccurrence)
+				
+				case TemporalOccurrence.BEFORE_R :  String aux = beforeR(nOccurrence-1) // removing the var R
+													return "<>#2 -> ${aux}"
+													
+				case TemporalOccurrence.AFTER_Q :   String aux = afterQ(nOccurrence-1) // removing the var Q
+													return "<>#2 -> (!#2 U (#2 & ${aux}))"
+													
+				case TemporalOccurrence.BETWEEN_Q_AND_R :   String aux = betweenQandR(nOccurrence-2) // removing the vars Q and R
+															return "[]((#2 & <>#3) -> ${aux})"
+															
+				case TemporalOccurrence.AFTER_Q_UNTIL_R : 	String aux = afterQuntilR(nOccurrence-2) // removing the vars Q and R
+															return "[](#2 -> ${aux})"
 				default: return ""
 			}
+		}
+		
+		private String globally(int n) {
+			if (n == 0) {
+				return "[]!#1"
+			}
+			return "(!#1 W (#1 W ${globally(n-1)}))" 
+		}
+		
+		private String beforeR(int n) {
+			if (n == 0) { 
+				return "(!#1 U #2)"
+			}
+			return "((!#1 & !#2) U (#2 | ((#1 & !#2) U (#2 | ${beforeR(n-1)}))))"
+		}
+		
+		private String afterQ(int n) {
+			if(n == 0) {
+				return "[]!#1"
+			}
+			return "(!#1 W (#1 W ${afterQ(n-1)}))"
+		}
+		
+		private String betweenQandR(int n) {
+			if(n == 0) {
+				return "(!#1 U #3)"
+			}
+			return "((!#1 & !#3) U (#3 | ((#1 & !#3) U (#3 | ${betweenQandR(n-1)}))))"
+		}
+		
+		private String afterQuntilR(int n) {
+			if(n == 0) {
+				return "(!#1 W #3) | []#1"
+			}
+			return "((!#1 & !#3) U (#3 | ((#1 & !#3) U (#3 | ${afterQuntilR(n-1)}))))"
 		}
 	},
 
@@ -134,7 +179,7 @@ enum ExpressionPattern {
 	},
 
 	CONSTRAINED_CHAIN {
-		String buildTemporalProperty(TemporalOccurrence temporalProperty) {
+		String buildTemporalProperty(TemporalOccurrence temporalProperty) { 
 			switch(temporalProperty) {
 				case TemporalOccurrence.GLOBALLY : return "[] (#4 -> <>(#1 & !#3 & ()(!#3 U #2)))"
 				case TemporalOccurrence.BEFORE_R : return "<>#5 -> (#4 -> (!#5 U (#1 & !#5 & !#3 & ()((!#5 & !#3) U #2)))) U #5"
@@ -146,5 +191,5 @@ enum ExpressionPattern {
 		}
 	}
 	
-	abstract String buildTemporalProperty(TemporalOccurrence temporalProperty);
+	abstract String buildTemporalProperty(TemporalOccurrence temporalProperty)
 }

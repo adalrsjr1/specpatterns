@@ -20,11 +20,17 @@ class PropertyInstance {
 	}
 	
 	void build() {
-		StringBuilder sb = new StringBuilder(pattern.buildTemporalProperty(occurrence))
+		StringBuilder sb
+		if(pattern == ExpressionPattern.BOUNDED_EXISTENCE) {
+			sb = new StringBuilder(pattern.buildTemporalProperty(occurrence, variables.size()))
+		}
+		else { 
+			sb = new StringBuilder(pattern.buildTemporalProperty(occurrence))
+		}
 		int count = 1
-		println "size: $variables.size"
-		while(variables.size()) {
-			ExpressionVariable var = variables.remove(0)
+		Collection uniqueVariables = variables.unique()
+		while(uniqueVariables.size()) {
+			ExpressionVariable var = uniqueVariables.remove(0)
 			StringBuffer sbuff = new StringBuffer()
 			Pattern p = Pattern.compile("#$count")
 			Matcher m = p.matcher(sb.toString())
@@ -39,8 +45,8 @@ class PropertyInstance {
 			
 			++count
 		}
+		
 		temporalProperty = sb.toString()
-		println ">> $temporalProperty"
 	}
 
 	String toString() {

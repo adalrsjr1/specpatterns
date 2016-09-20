@@ -17,7 +17,6 @@ class And {
 	}
 	
 	ExpressionBuilder and(ExpressionVariable r) {
-		vars << r
 		expressionBuilder.instance = new PropertyInstance(occurrence, pattern, vars << r)
 		return expressionBuilder
 	}
@@ -38,7 +37,6 @@ class Until {
 	}
 	
 	ExpressionBuilder until(ExpressionVariable r) {
-		vars << r
 		expressionBuilder.instance = new PropertyInstance(occurrence, pattern, vars << r)
 		return expressionBuilder
 	}

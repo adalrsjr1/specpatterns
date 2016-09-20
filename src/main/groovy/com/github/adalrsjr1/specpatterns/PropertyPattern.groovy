@@ -14,8 +14,6 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class PropertyPattern {
-	List<ExpressionBuilder> expressions = []
-	
 	AbsenceExpression absence(ExpressionVariable p) {
 		new AbsenceExpression(p)
 	}
@@ -24,6 +22,7 @@ class PropertyPattern {
 		new ExistenceExpression(p)
 	}
 	
+	// TODO: number of occurrences not implemented yet
 	BoundedExpression boundedExistence(ExpressionVariable p) {
 		new BoundedExpression(p)
 	}

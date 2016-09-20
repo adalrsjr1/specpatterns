@@ -15,6 +15,9 @@ class BoundedExpression {
 	}
 	
 	ExpressionBuilder occurs(int nTimes) {
+		if(nTimes == 0) {
+			throw new RuntimeException("Number of occurrence must be greater then 0")
+		}
 		List vars = []
 		for(i in 1..nTimes) {
 			vars << p
