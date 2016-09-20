@@ -18,6 +18,7 @@ public class App
 		
 		PropertyPattern pp = Property.create()
 		
+		pp.con
 //		println pp.absence(p)
 //		.isFalse()
 //		.before(r)
