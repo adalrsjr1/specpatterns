@@ -2,6 +2,9 @@ package com.github.adalrsjr1.specpatterns
 
 
 import groovy.util.logging.Slf4j
+import jhoafparser.storage.StoredAutomaton
+
+import com.github.adalrsjr1.ltl.AutomatonFactory
 
 @Slf4j
 public class App 
@@ -18,13 +21,14 @@ public class App
 		
 		PropertyPattern pp = Property.create()
 		
-		pp.
-		println pp.absence(p)
+		PropertyInstance property = pp.absence(p)
 		.isFalse()
 		.before(r)
 		.build()
 		
-		println pp.absence(p)
+		StoredAutomaton automaton = AutomatonFactory.createAutomaton(property)
+				
+		/*println pp.absence(p)
 			.isFalse()
 			.between(q)
 			.and(r)
@@ -106,6 +110,6 @@ public class App
 			.after(q)
 			.until(r)
 			.build()
-			
+			*/
     }
 }
