@@ -1,7 +1,9 @@
-package com.github.adalrsjr1.automaton
+package com.github.adalrsjr1.automaton.events
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
+import com.github.adalrsjr1.automaton.AutomatonEngine
 
 import groovy.transform.ToString
 

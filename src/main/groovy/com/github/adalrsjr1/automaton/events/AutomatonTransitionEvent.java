@@ -1,4 +1,4 @@
-package com.github.adalrsjr1.automaton;
+package com.github.adalrsjr1.automaton.events;
 
 import java.util.Map;
 

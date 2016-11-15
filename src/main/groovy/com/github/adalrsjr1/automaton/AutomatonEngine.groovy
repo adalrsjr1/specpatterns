@@ -2,6 +2,7 @@ package com.github.adalrsjr1.automaton;
 
 import jhoafparser.ast.BooleanExpression
 import jhoafparser.storage.StoredAutomaton
+import jhoafparser.storage.StoredEdgeWithLabel
 import jhoafparser.storage.StoredState
 
 import java.util.Map
@@ -10,8 +11,13 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import com.github.adalrsjr1.automaton.events.AutomatonEvent
+import com.github.adalrsjr1.automaton.events.AutomatonListener
+import com.github.adalrsjr1.automaton.events.AutomatonTransitionEvent
 import com.google.common.base.Stopwatch;
-
+import edu.uci.ics.jung.graph.DirectedSparseMultigraph
+import edu.uci.ics.jung.graph.Graph
+import edu.uci.ics.jung.graph.util.EdgeType
 import groovy.transform.Memoized
 
 public class AutomatonEngine {
@@ -25,10 +31,61 @@ public class AutomatonEngine {
 	private int lastState = 0
 
 	private List<AutomatonListener> listeners = []
+
+	private TimeUnit timeUnit
+	private Graph graph
 	
-	AutomatonEngine(StoredAutomaton automaton) {
+	AutomatonEngine(StoredAutomaton automaton, TimeUnit watchTimeUnit) {
 		storedAutomaton = automaton
 		timeInCurrentState = Stopwatch.createStarted()
+		this.timeUnit = watchTimeUnit
+		this.graph = createGraph()
+	}
+
+	private Graph createGraph() {
+		/*
+		 *  protected class EdgeWrapper<E> {
+			private final String = UUID.randomUUID().toString()
+			private final E edge
+			EdgeWrapper(E edge) {
+				this.edge = edge
+			}
+			
+			E getEdge() {
+				edge
+			}
+		 * */
+		StoredAutomaton automaton = storedAutomaton
+
+		Iterable<StoredState> states = automaton.storedStates
+		Graph graph = new DirectedSparseMultigraph()
+
+		states.each { StoredState state ->
+			automaton.getEdgesWithLabel(state.stateId).each { StoredEdgeWithLabel edge ->
+				edge.conjSuccessors.each { def to ->
+					//EdgeWrapper e = new EdgeWrapper(edge.labelExpr.toString())
+					//graph.addEdge(e, state.stateId, automaton.getStoredState(to).stateId, EdgeType.DIRECTED)
+				}
+			}
+
+		}
+		return graph
+	}
+
+	Graph getGraph() {
+		graph
+	}
+
+	AutomatonEngine(StoredAutomaton automaton) {
+		this(automaton, TimeUnit.MILLISECONDS)
+	}
+
+	void setTimeUnit(TimeUnit timeUnit) {
+		this.timeUnit = timeUnit
+	}
+
+	TimeUnit getTimeUnit() {
+		timeUnit
 	}
 
 	boolean isInAcceptanceState() {
@@ -42,21 +99,21 @@ public class AutomatonEngine {
 	int getLastState() {
 		return lastState
 	}
-	
+
 	private void notify(AutomatonEvent event) {
 		for(AutomatonListener listener in listeners) {
 			listener.notify(event)
 		}
 	}
-	
+
 	void addListener(AutomatonListener listener) {
 		listeners << listener
 	}
-	
+
 	void removeListener(AutomatonListener listener) {
 		listeners.remove(listener)
 	}
-	
+
 	void clearListeners() {
 		listeners.clear()
 	}
@@ -65,15 +122,15 @@ public class AutomatonEngine {
 		timeInCurrentState.reset()
 		timeInCurrentState.start()
 	}
-	
+
 	void setCurrentState(int newCurrentState) {
 		lastState = currentState
 		currentState = newCurrentState
-		notify(new AutomatonEvent(this, lastState, currentState, timeInCurrentState.elapsed(TimeUnit.MILLISECONDS), isInAcceptanceState()))
+		notify(new AutomatonEvent(this, lastState, currentState, timeInCurrentState.elapsed(timeUnit), isInAcceptanceState()))
 		restartWatch()
 	}
 
-	long timeElapsedInCurrentState(TimeUnit timeUnit) {
+	long timeElapsedInCurrentState() {
 		timeInCurrentState.elapsed(timeUnit)
 	}
 
