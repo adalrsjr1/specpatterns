@@ -1,10 +1,11 @@
 package com.github.adalrsjr1.specpatterns
 
 
+import com.github.adalrsjr1.automaton.AutomatonFactory
+
 import groovy.util.logging.Slf4j
 import jhoafparser.storage.StoredAutomaton
 
-import com.github.adalrsjr1.ltl.AutomatonFactory
 
 @Slf4j
 public class App 
@@ -25,7 +26,6 @@ public class App
 		.isFalse()
 		.before(r)
 		.build()
-		
 		StoredAutomaton automaton = AutomatonFactory.createAutomaton(property)
 				
 		/*println pp.absence(p)

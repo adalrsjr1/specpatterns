@@ -16,7 +16,7 @@ public class AutomatonFactory {
 	private static final Logger log = LoggerFactory.getLogger(AutomatonFactory.class)
 
 	private static final String LTL_GENERATOR = "ltl2tgba"
-	private static final String LTL_GENERATOR_ARGS = "--ba"
+	private static final String LTL_GENERATOR_ARGS = "-D -G -B --lenient"
 
 	/**
 	 * only construct automaton on windows with Spot ModelChecker installed at bash
@@ -25,7 +25,7 @@ public class AutomatonFactory {
 	 */
 	static StoredAutomaton createAutomaton(PropertyInstance property) {
 		final Stopwatch stopwatch = Stopwatch.createStarted()
-		String spotCommand = "${LTL_GENERATOR} ${LTL_GENERATOR_ARGS} \'${property.toString()}\'"
+		String spotCommand = "\"${LTL_GENERATOR} ${LTL_GENERATOR_ARGS} \'${property.toString()}\'\""
 		ProcessBuilder builder = new ProcessBuilder("bash", "-c", spotCommand)
 		Process process = builder.start()
 		
@@ -36,7 +36,27 @@ public class AutomatonFactory {
 
 		HOAConsumerStore consumerStore = new HOAConsumerStore()
 		// for debug purpose
-		// HOAFParser.parseHOA(input, new HOAConsumerPrint(System.out))
+//		 HOAFParser.parseHOA(input, new HOAConsumerPrint(System.out))
+		HOAFParser.parseHOA(input, consumerStore)
+		stopwatch.stop()
+		log.info "Automaton for property '${property}' created in ${stopwatch}"
+		return consumerStore.getStoredAutomaton()
+	}
+	
+	static StoredAutomaton createAutomaton(String property) {
+		final Stopwatch stopwatch = Stopwatch.createStarted()
+		String spotCommand = "\"${LTL_GENERATOR} ${LTL_GENERATOR_ARGS} \'${property}\'\""
+		ProcessBuilder builder = new ProcessBuilder("bash", "-c", spotCommand)
+		Process process = builder.start()
+		
+		PipedInputStream input = new PipedInputStream()
+		PipedOutputStream output = new PipedOutputStream(input)
+		
+		process.waitForProcessOutput(output, System.err);
+
+		HOAConsumerStore consumerStore = new HOAConsumerStore()
+		// for debug purpose
+//		 HOAFParser.parseHOA(input, new HOAConsumerPrint(System.out))
 		HOAFParser.parseHOA(input, consumerStore)
 		stopwatch.stop()
 		log.info "Automaton for property '${property}' created in ${stopwatch}"
